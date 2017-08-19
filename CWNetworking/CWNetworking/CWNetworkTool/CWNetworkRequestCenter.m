@@ -78,12 +78,7 @@
             successBlock(dataStr);
         }else {
             NSDictionary *dic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
-            if ([dic[@"code"]integerValue] == 200) {
-                successBlock(dic);
-            }else {
-                failedBlock((NSError *)dic);
-            }
-            
+            successBlock(dic);
         }
     }];
     [sessionTask resume];

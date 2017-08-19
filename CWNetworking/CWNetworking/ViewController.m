@@ -20,27 +20,61 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [self request2];
+    [self request];
 }
 
 
 // 原声网络请求
 - (void)request
 {
-    /*
-     Urls: 请求地址
-     Parameters: 请求参数, 有参数就拼接; 没有可以传nil
-     Method: 请求方式
-     TimeoutInterval: 超时时间
-     IsHavePrefix: 返回的数据是否有前缀(拼接参数时是否有请求头); 如果有则返回字符串形式; 没有就返回字典样式
-     对应的回调需要调用正确,否则会崩溃
+    
+    /**
+     网络请求
+     
+     @param urls URL
+     @param parameter 参数
+     @param method 请求方式
+     @param token 认证token
+     @param timeInterval 超时时长
+     @param parameterPrefix 参数是否有前缀, 有YES, 无NO
+     @param progress 进度
+     @param successBlock 成功回调
+     @param failedBlock 失败回调
      */
-    [KCWNetworkRequestCenter requestDataWithUrls:@"URLString" withParameters:nil withMethod:@"POST" withTimeoutInterval:10 IsHavePrefix:NO];
-    KCWNetworkRequestCenter.successDicBlock = ^(NSDictionary *dic) {
-        
-        NSLog(@"dic: %@", dic);
-        
-    };
+    // 这里举例: 表单传递参数请求网络数据
+    
+    // 字符串表单参数传递: encData: 网关认证 encKey
+    NSString *parameter1 = [NSString stringWithFormat:@"encData={\"key\":\"%@\"}&encKey=",@""];
+    
+    
+    
+    // 数组表单参数传递: encData: 网关认证 encKey
+    // 需要先将数组反序列化
+    NSError *error = nil;
+    NSMutableArray *dataArr = [NSMutableArray array];
+    
+    // 将字典转换成 NSData
+    NSData *data = [NSJSONSerialization dataWithJSONObject:@"你的字典" options:NSJSONWritingPrettyPrinted error:&error];
+    NSString *jsonStr = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
+    
+    // 如果有多个字典就循环遍历添加到数组中
+    [dataArr addObject:jsonStr];
+
+    NSString *parameter2 = [NSString stringWithFormat:@"encData={\"key\":{\"key\":\"%@\",\"key\":[%@]}}&encKey=",@"你的value",@"你需要上传的数组"];
+    
+    
+    
+    
+    
+    // 如果token需要验证就传入token, 不需要就传 nil
+    NSString *token = @"获取你的token";
+    
+    // ParameterPrefix: 传递的参数是否有前缀, 有数据就会以字符串的形式返回; 无就是以字典的形式返回
+    [KCWNetworkRequestCenter requestDataWithURL:@"" Parameters:parameter2 Method:@"POST" AuthorizationToken:token TimeoutInterval:10 ParameterPrefix:NO Progress:nil withSuccessBlock:^(id response) {
+        NSLog(@"%@", response);
+    } withFailedBlock:^(NSError *error) {
+        NSLog(@"%@", error);
+    }];
     
 }
 
