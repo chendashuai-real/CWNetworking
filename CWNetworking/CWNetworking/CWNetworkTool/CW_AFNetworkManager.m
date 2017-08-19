@@ -37,11 +37,11 @@
  @param successBlock 成功回调
  @param failedBlock 失败回调
  */
-- (void)networkRequestWithUrls:(NSString *)urls withMethod:(NSString *)method withParameters:(NSDictionary *)parameters withProgress:(NSString *)progress withSuccessBlock:(void(^)(id responsnose))successBlock withFailedBlock:(void(^)(NSError *error))failedBlock
+- (void)networkRequestWithUrls:(NSString *)urls withMethod:(NSString *)method withParameters:(id)parameters withProgress:(NSString *)progress withSuccessBlock:(void(^)(id responsnose))successBlock withFailedBlock:(void(^)(NSError *error))failedBlock
 {
     //在没获取到更深入一层的方法之前，判断后再去使用GET 或者 POST方法。
     if ([method isEqualToString:@"GET"]) {
-        NSString *urlStr = [NSString stringWithFormat:@"%@?%@",urls, parameters.description];
+        NSString *urlStr = [NSString stringWithFormat:@"%@?%@",urls, parameters];
         
         [self GET:urlStr parameters:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id _Nullable responseObject) {
             

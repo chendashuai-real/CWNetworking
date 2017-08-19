@@ -31,72 +31,62 @@
 }
 
 
+
 /**
- 网络请求数据
+ 网络请求
  
- @param urls URL地址
- @param parameter 传递的参数
+ @param urls URL
+ @param parameter 参数
  @param method 请求方式
- @param timeInterval 超时时长 默认是60s, 如果 <=0 或 > 60 则默认是60s
- @param isHavePrefix 是否有请求头
+ @param token 认证token
+ @param timeInterval 超时时长
+ @param parameterPrefix 参数是否有前缀
+ @param progress 进度
+ @param successBlock 成功回调
+ @param failedBlock 失败回调
  */
-- (void)requestDataWithUrls:(NSString *)urls withParameters:(nullable NSString *)parameter withMethod:(NSString *_Nullable)method withTimeoutInterval:(NSInteger)timeInterval IsHavePrefix:(BOOL)isHavePrefix
+- (void)requestDataWithURL:(NSString *)urls Parameters:(id)parameter Method:(NSString *)method AuthorizationToken:(NSString *)token TimeoutInterval:(NSInteger)timeInterval ParameterPrefix:(BOOL)parameterPrefix Progress:(NSString *)progress withSuccessBlock:(void (^)(id response))successBlock withFailedBlock:(void (^)(NSError *error))failedBlock
 {
-    NSMutableURLRequest *request;
-    // POST 请求
-    if ([method isEqualToString:@"POST"]) {
-        NSURL *url = [NSURL URLWithString:urls];
-        request = [NSMutableURLRequest requestWithURL:url];
-        
-        // 设置传送数据编码样式
-        [request setValue:@"application/x-www-form-urlencoded; charset=UTF-8" forHTTPHeaderField:@"Content-Type"];
-        // 请求体 allowLossyConversion 允许数据缺失
-        request.HTTPBody = [parameter dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES];
-        
+    NSURL *url = [NSURL URLWithString:urls];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+    [request setHTTPMethod: method];
+    request.timeoutInterval = timeInterval;
+    
+    if (parameter != nil) {
+        NSString *paraStr = [NSString stringWithFormat:@"%@",parameter];
+        request.HTTPBody = [paraStr dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES];
     }
     
-    // GET 请求
-    if ([method isEqualToString:@"GET"]) {
-        // 拼接请求字符串
-        NSString *urlStr = [NSString stringWithFormat:@"%@?%@", urls, parameter];
-        NSURL *url = [NSURL URLWithString:urlStr];
-        request = [NSMutableURLRequest requestWithURL:url];
-        
+    if (token != nil) {
+        [request addValue:token forHTTPHeaderField:@"Authorization"];
     }
     
-    // 请求方式
-    request.HTTPMethod = method;
-    //5s后请求超时（默认60s超时）
-    if (timeInterval <= 0 || timeInterval > 60) {
-        // 等于则默认60s超时
-        request.timeoutInterval = 60;
-    }else {
-        request.timeoutInterval = timeInterval;
-    }
+    [request setValue:@"application/x-www-form-urlencoded;charset=utf-8" forHTTPHeaderField:@"Content-Type"];
     
-    // 创建网络请求会话
     NSURLSession *session = [NSURLSession sharedSession];
     NSURLSessionTask *sessionTask = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        if (error.code == NSURLErrorTimedOut || data == nil) {
-            // 这里做一些网络请求超时和数据为空的一些操作
-            [[NSNotificationCenter defaultCenter] postNotificationName:kNoDataNotification object:nil];
+        if (error) {
+            failedBlock(error);
             return ;
         }
-        
-        // 是否有请求头
-        if (isHavePrefix) {
-            // 将二进制文件转化为字符串形式
-            NSString *dataStr = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
-            _successStrBlock(dataStr);
-        } else {
-            // json解析
-            NSDictionary *dic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
-            _successDicBlock(dic);
+        if (data == nil) {
+            successBlock(@"data为空");
+            return ;
         }
-        
+        if (parameterPrefix) { // 传参数有前缀
+            NSString *dataStr = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
+            successBlock(dataStr);
+        }else {
+            NSDictionary *dic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+            if ([dic[@"code"]integerValue] == 200) {
+                successBlock(dic);
+            }else {
+                failedBlock((NSError *)dic);
+            }
+            
+        }
     }];
     [sessionTask resume];
-    
     
 }
 

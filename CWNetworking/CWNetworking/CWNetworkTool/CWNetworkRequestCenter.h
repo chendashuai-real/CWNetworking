@@ -9,12 +9,6 @@
 #import <Foundation/Foundation.h>
 // 单例宏定义
 #define KCWNetworkRequestCenter [CWNetworkRequestCenter shareNetworkRequestCenter]
-// 没有数据通知
-#define kNoDataNotification @"noDataNotification"
-
-typedef void(^returnBlock)(NSString *);
-
-typedef void(^backBlock)(NSDictionary *);
 
 
 @interface CWNetworkRequestCenter : NSObject
@@ -25,29 +19,24 @@ typedef void(^backBlock)(NSDictionary *);
 
 
 /**
- 网络请求数据
+ 网络请求
  
- @param urls URL地址
- @param parameter 传递的参数
+ @param urls URL
+ @param parameter 参数
  @param method 请求方式
- @param timeInterval 超时时长 默认是60s, 如果 <=0 或 > 60 则默认是60s
- @param isHavePrefix 是否有请求头
+ @param token 认证token
+ @param timeInterval 超时时长
+ @param parameterPrefix 参数是否有前缀
+ @param progress 进度
+ @param successBlock 成功回调
+ @param failedBlock 失败回调
  */
-- (void)requestDataWithUrls:(NSString *)urls withParameters:(nullable NSString *)parameter withMethod:(NSString *_Nullable)method withTimeoutInterval:(NSInteger)timeInterval IsHavePrefix:(BOOL)isHavePrefix;
-
-
-// 请求成功回调
-
-// 如果后台返回数据中有请求头,那使用这个回调
-@property(nonatomic,copy)returnBlock successStrBlock;
-
-// 如果后台返回数据是json样式,那调用这个回调
-@property(nonatomic,copy)backBlock successDicBlock;
+- (void)requestDataWithURL:(NSString *)urls Parameters:(id)parameter Method:(NSString *)method AuthorizationToken:(NSString *)token TimeoutInterval:(NSInteger)timeInterval ParameterPrefix:(BOOL)parameterPrefix Progress:(NSString *)progress withSuccessBlock:(void (^)(id response))successBlock withFailedBlock:(void (^)(NSError *error))failedBlock;
 
 
 /**
  字符串转字典
-
+ 
  @param dataStr data字符串
  @param length 请求头字符串长度
  @return 返回字符串
