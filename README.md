@@ -1,5 +1,5 @@
 # CWNetworking
-将原声网络请求和AFNetworking请求集中在一个工具类中
+封装原生网络请求和AFNetworking工具类, demo举例表单格式提交参数
 @(原声网络请求NSURlsession)[封装AFNetworking]
 
 **CWNetworking**是我在一个整个项目下来对网络请求的一点总结, 其中曲折坎坷也是多不胜数, 它集合了原生网络请求和第三方AFNetworking.  
@@ -14,26 +14,23 @@
 
 ##CWNetworking简介
 
->将原生网络请求和第三方AFNetworking整合,让你多一种选择。    —— [代码](https://github.com/LuckyChen73/CWNetworking.git)
+>封装原生网络请求和第三方AFNetworking,代码中有表单格式提交参数示例    —— [代码](https://github.com/LuckyChen73/CWNetworking.git)
 
 
 
 ### 使用
 ``` python
 原生网络请求:
-[KCWNetworkRequestCenter requestDataWithUrls:@"URLString" withParameters:nil withMethod:@"POST" withTimeoutInterval:10 IsHavePrefix:NO];                     KCWNetworkRequestCenter.successDicBlock = ^(NSDictionary *dic) {
-        
-        NSLog(@"dic: %@", dic);
-        
-};
+[KCWNetworkRequestCenter requestDataWithURL:@"" Parameters:parameter2 Method:@"POST" AuthorizationToken:token TimeoutInterval:10 ParameterPrefix:NO Progress:nil withSuccessBlock:^(id response) {
+        NSLog(@"%@", response);
+} withFailedBlock:^(NSError *error) {
+        NSLog(@"%@", error);
+ }];
 
 第三方AFNetworking:
 [KCW_AFNetworkManager networkRequestWithUrls:@"URLString" withMethod:@"GET" withParameters:nil withProgress:nil withSuccessBlock:^(id responsnose) {
-        
         NSLog(@"adjhk: %@", responsnose);
-        
 } withFailedBlock:^(NSError *error) {
-        
         NSLog(@"%@", error);
 }];
 
@@ -43,16 +40,19 @@
 ### 注解
 
 /**
- 网络请求数据
+ 网络请求
  
- @param urls URL地址  建议:如果你的url地址通用, 那么就在pch文件中宏定义基地址
- @param parameter 传递的参数
+ @param urls URL
+ @param parameter 参数
  @param method 请求方式
- @param timeInterval 超时时长 默认是60s, 如果 <=0 或 > 60 则默认是60s
- @param isHavePrefix 是否有请求头
+ @param token 认证token
+ @param timeInterval 超时时长
+ @param parameterPrefix 参数是否有前缀
+ @param progress 进度
+ @param successBlock 成功回调
+ @param failedBlock 失败回调
  */
- 
- -- (void)requestDataWithUrls:(nullable NSString *)urls withParameters:(nullable NSString *)parameter withMethod:(NSString *_Nullable)method withTimeoutInterval:(NSInteger)timeInterval IsHavePrefix:(BOOL)isHavePrefix;
+-- (void)requestDataWithURL:(NSString *)urls Parameters:(id)parameter Method:(NSString *)method AuthorizationToken:(NSString *)token TimeoutInterval:(NSInteger)timeInterval ParameterPrefix:(BOOL)parameterPrefix Progress:(NSString *)progress withSuccessBlock:(void (^)(id response))successBlock withFailedBlock:(void (^)(NSError *error))failedBlock;
 
 
 
