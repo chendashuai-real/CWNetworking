@@ -52,13 +52,17 @@
     [request setHTTPMethod: method];
     request.timeoutInterval = timeInterval;
     
-    if (parameter != nil) {
-        NSString *paraStr = [NSString stringWithFormat:@"%@",parameter];
-        request.HTTPBody = [paraStr dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES];
+    if ([parameter isKindOfClass:[NSString class]]) { // 是string类型
+        request.HTTPBody = [parameter dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES];
+    }else if ([parameter isKindOfClass:[NSDictionary class]]) {
+        NSData *data = [NSJSONSerialization dataWithJSONObject:parameter options:NSJSONWritingPrettyPrinted error:nil];
+        NSString *dataStr = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
+        request.HTTPBody = [dataStr dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES];
     }
     
     if (token != nil) {
-        [request addValue:token forHTTPHeaderField:@"Authorization"];
+        NSString *value = [NSString stringWithFormat:@"%@",token];
+        [request addValue:value forHTTPHeaderField:@"Authorization"];
     }
     
     [request setValue:@"application/x-www-form-urlencoded;charset=utf-8" forHTTPHeaderField:@"Content-Type"];

@@ -25,7 +25,7 @@
  @param successBlock 成功回调
  @param failedBlock 失败回调
  */
-- (void)networkRequestWithUrls:(NSString *)urls withMethod:(NSString *)method withParameters:(NSDictionary *)parameters withProgress:(NSString *)progress withSuccessBlock:(void(^)(id responsnose))successBlock withFailedBlock:(void(^)(NSError *error))failedBlock;
+- (void)networkRequestWithUrls:(NSString *)urls withMethod:(NSString *)method withParameters:(id)parameters withProgress:(NSString *)progress withSuccessBlock:(void(^)(id responsnose))successBlock withFailedBlock:(void(^)(NSError *error))failedBlock;
 
 
 
