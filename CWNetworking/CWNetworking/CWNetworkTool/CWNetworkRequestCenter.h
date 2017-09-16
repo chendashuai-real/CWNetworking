@@ -17,6 +17,9 @@
 
 + (instancetype)defaultNetworkRequestCenter;
 
+// 基地址
+@property (nonatomic, copy) NSString *baseURL;
+
 
 /**
  网络请求

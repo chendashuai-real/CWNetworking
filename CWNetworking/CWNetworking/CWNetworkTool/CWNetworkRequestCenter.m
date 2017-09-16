@@ -47,7 +47,12 @@
  */
 - (void)requestDataWithURL:(NSString *)urls Parameters:(id)parameter Method:(NSString *)method AuthorizationToken:(NSString *)token TimeoutInterval:(NSInteger)timeInterval ParameterPrefix:(BOOL)parameterPrefix Progress:(NSString *)progress withSuccessBlock:(void (^)(id response))successBlock withFailedBlock:(void (^)(NSError *error))failedBlock
 {
-    NSURL *url = [NSURL URLWithString:urls];
+    NSURL *url;
+    if (![urls hasPrefix:@"http"]) { // 有 baseUrl, 拼接完整 url
+        url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@", self.baseURL, urls]];
+    }else { // 没有 baseUrl, 即是完整 url
+        url = [NSURL URLWithString:urls];
+    }
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
     [request setHTTPMethod: method];
     request.timeoutInterval = timeInterval;
