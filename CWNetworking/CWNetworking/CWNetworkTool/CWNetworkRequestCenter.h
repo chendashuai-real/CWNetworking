@@ -34,5 +34,17 @@
 - (void)requestDataWithURL:(NSString *)urls Parameters:(id)parameter Method:(NSString *)method AuthorizationToken:(NSString *)token TimeoutInterval:(NSInteger)timeInterval ParameterPrefix:(BOOL)parameterPrefix Progress:(NSString *)progress withSuccessBlock:(void (^)(id response))successBlock withFailedBlock:(void (^)(NSError *error))failedBlock;
 
 
+/**
+ 字符串转字典
+ 
+ @param dataStr data字符串
+ @param length 请求头字符串长度
+ @return 返回字符串
+ */
++ (NSDictionary *)getDictionaryWithDataString:(NSString *)dataStr withPrefixLenth:(NSInteger)length;
+
+
+
+
 
 @end
