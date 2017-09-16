@@ -79,7 +79,8 @@
         }
         if (parameterPrefix) { // 传参数有前缀
             NSString *dataStr = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
-            successBlock(dataStr);
+            NSDictionary *dic = [self getDictionaryWithDataString:dataStr];
+            successBlock(dic);
         }else {
             NSDictionary *dic = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
             successBlock(dic);
@@ -94,19 +95,19 @@
  字符串转字典
  
  @param dataStr data字符串
- @param length 请求头字符串长度
  @return 返回字符串
  */
-+ (NSDictionary *)getDictionaryWithDataString:(NSString *)dataStr withPrefixLenth:(NSInteger)length
+- (NSDictionary *)getDictionaryWithDataString:(NSString *)dataStr
 {
     NSString * cutString;
     NSData *stringData;
     
-    if (length > 0) { // 有请求头
-        cutString = [dataStr substringFromIndex:length];
+    if (![dataStr hasPrefix:@"{"]) { // 有参数头 去除头部
+        NSMutableString *mutableStr = [NSMutableString stringWithString:dataStr];
+        cutString = [mutableStr componentsSeparatedByString:@"{"].lastObject;
+        cutString = [NSString stringWithFormat:@"{%@",cutString];
         stringData = [cutString dataUsingEncoding:NSUTF8StringEncoding];
-        
-    }else { // 无请求头
+    }else { // 无参数头
         stringData = [dataStr dataUsingEncoding:NSUTF8StringEncoding];
     }
     
