@@ -20,7 +20,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [self request];
+//    [self request];
+    
+    [self dicTest];
 }
 
 
@@ -76,7 +78,26 @@
         NSLog(@"%@", error);
     }];
     
+    
+    
 }
+
+// 键值数组转换为字典
+- (void)dicTest
+{
+    NSArray *keyArr = @[@"",@"",@"loginName",@"ap"];
+    NSArray *valueArr = @[@"",@"321123",@"",@""];
+    NSDictionary *dic = [CWNetworkRequestCenter dictionaryWithKeyArray:keyArr valueArray:valueArr];
+    // 将字典 转成 JSON数据
+    NSData *data1 = [NSJSONSerialization dataWithJSONObject:dic options:NSJSONWritingPrettyPrinted error:NULL];
+    // 将JSON数据 转成 字符串
+    NSString *upString = [[NSString alloc] initWithData: data1 encoding: NSUTF8StringEncoding];
+    
+    NSLog(@"adskh: %@", upString);
+    
+    
+}
+
 
 // AFN 请求
 - (void)request2

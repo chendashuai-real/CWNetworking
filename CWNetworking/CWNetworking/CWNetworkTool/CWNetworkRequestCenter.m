@@ -118,17 +118,14 @@
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
++ (NSDictionary *)dictionaryWithKeyArray:(NSArray *)keyArray valueArray:(NSArray *)valueArray
+{
+    NSMutableDictionary *dicM = [NSMutableDictionary dictionaryWithCapacity:keyArray.count];
+    for (NSInteger i = 0; i < keyArray.count; i++) {
+        [dicM setObject:valueArray[i] forKey:keyArray[i]];
+    }
+    return dicM;
+}
 
 
 @end

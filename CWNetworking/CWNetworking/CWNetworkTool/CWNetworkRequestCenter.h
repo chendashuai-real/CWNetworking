@@ -45,6 +45,15 @@
 
 
 
+/**
+ 将数组转换为字典
+
+ @param keyArray 键数组
+ @param valueArray 值数组
+ @return 返回字典
+ */
++ (NSDictionary *)dictionaryWithKeyArray:(NSArray *)keyArray valueArray:(NSArray *)valueArray;
+
 
 
 @end
